@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #67b31f;
+  --color-primary-dark: #5a9e1b;
+  --color-primary-light: #7cc934;
+  --color-gray-light: #f8f9fa;
+  --color-gray-mid: #6c757d;
+  --color-gray-border: #e2e8f0;
+  --color-text: #1a1a1a;
+  --color-text-soft: #444444;
+}
+
+:root {
+  --color-primary: #67b31f;
+  --color-primary-dark: #5a9e1b;
+  --color-primary-light: #7cc934;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-gray-light: #f8f9fa;
+  --color-gray-mid: #6c757d;
+  --color-gray-border: #e2e8f0;
+  --color-text: #1a1a1a;
+  --color-text-soft: #444444;
+  --shadow-card: 0 2px 16px rgba(0, 0, 0, 0.07);
+  --shadow-card-hover: 0 8px 32px rgba(103, 179, 31, 0.15);
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  background: #ffffff;
+  color: var(--color-text);
+  font-family: var(--font-roboto), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tiptap editor styles */
+.ProseMirror {
+  outline: none;
+  min-height: 400px;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--color-gray-mid);
+  pointer-events: none;
+  height: 0;
+}
+
+.ProseMirror ul[data-type="taskList"] {
+  list-style: none;
+  padding: 0;
+}
+
+.ProseMirror ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.ProseMirror ul[data-type="taskList"] li > label {
+  flex: 0 0 auto;
+  margin-top: 3px;
+}
+
+.ProseMirror pre {
+  background: #1e1e2e;
+  color: #cdd6f4;
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  overflow-x: auto;
+  font-family: 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 0.875rem;
+}
+
+.ProseMirror blockquote {
+  border-left: 3px solid var(--color-primary);
+  padding-left: 1rem;
+  color: var(--color-text-soft);
+  font-style: italic;
+}
+
+.ProseMirror a {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gray-border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-mid);
+}

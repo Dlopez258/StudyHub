@@ -1,0 +1,23 @@
+import { createClient } from '@/lib/supabase/server';
+import { CategoriesClient } from '@/components/shared/CategoriesClient';
+
+export default async function CategoriesPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const { data: categories } = await supabase
+    .from('categories')
+    .select('*')
+    .eq('user_id', user!.id)
+    .order('name');
+
+  return (
+    <main className="max-w-2xl mx-auto px-6 py-8">
+      <h1 className="text-2xl font-bold text-[var(--color-text)] mb-1">Categorías</h1>
+      <p className="text-[var(--color-text-soft)] text-sm mb-6">
+        Organiza tus tareas y sesiones de estudio por materias o áreas.
+      </p>
+      <CategoriesClient initialCategories={categories ?? []} />
+    </main>
+  );
+}

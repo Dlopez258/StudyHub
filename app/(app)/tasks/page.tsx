@@ -1,0 +1,35 @@
+import { createClient } from '@/lib/supabase/server';
+import { TasksClient } from '@/components/tasks/TasksClient';
+
+export default async function TasksPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const [{ data: tasks }, { data: categories }] = await Promise.all([
+    supabase
+      .from('tasks')
+      .select('*, subtasks(*), category:categories(*)')
+      .eq('user_id', user!.id)
+      .order('position', { ascending: true }),
+    supabase
+      .from('categories')
+      .select('*')
+      .eq('user_id', user!.id)
+      .order('name'),
+  ]);
+
+  return (
+    <div className="flex flex-col h-[calc(100vh-68px)]">
+      <div className="px-6 py-4 bg-white border-b border-[var(--color-gray-border)]">
+        <h1 className="text-xl font-bold text-[var(--color-text)]">Tareas</h1>
+        <p className="text-sm text-[var(--color-text-soft)] mt-0.5">
+          Matriz de Eisenhower — organiza por urgencia e importancia
+        </p>
+      </div>
+      <TasksClient
+        initialTasks={tasks ?? []}
+        categories={categories ?? []}
+      />
+    </div>
+  );
+}
