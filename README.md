@@ -59,17 +59,68 @@ Todo con autenticación segura, datos aislados por usuario mediante Row Level Se
 
 ## Arquitectura
 
+### Patrón MVC
+
+StudyHub implementa el patrón **Modelo — Vista — Controlador** aprovechando las primitivas de Next.js App Router:
+
 ```
-Cliente (React 19)
-       │
-       ├── Server Components (Next.js App Router)
-       │         └── Renderizado en servidor, sin JS innecesario al cliente
-       │
-       ├── Client Components (marcados con "use client")
-       │         └── Interactividad: editor, kanban, timer, formularios
-       │
-       └── API Routes / Server Actions
-                 └── Comunicación segura con Supabase usando service role key
+┌─────────────────────────────────────────────────────────────────┐
+│                        VISTA (View)                             │
+│  components/categories/                                         │
+│  ├── CategoriesClient.tsx   ← orquestador, gestión de estado    │
+│  ├── CategoryForm.tsx       ← formulario con react-hook-form    │
+│  └── CategoryList.tsx       ← lista con acciones editar/borrar  │
+└──────────────────────┬──────────────────────────────────────────┘
+                       │ llama Server Actions
+┌──────────────────────▼──────────────────────────────────────────┐
+│                    CONTROLADOR (Controller)                      │
+│  app/(app)/categories/actions.ts                                 │
+│  ├── createCategoryAction()  ← valida con Zod → invoca modelo   │
+│  ├── updateCategoryAction()  ← valida con Zod → invoca modelo   │
+│  └── deleteCategoryAction()  ← verifica sesión → invoca modelo  │
+└──────────────────────┬──────────────────────────────────────────┘
+                       │ instancia y llama métodos
+┌──────────────────────▼──────────────────────────────────────────┐
+│                      MODELO (Model / DAO)                        │
+│  lib/models/                                                     │
+│  ├── BaseModel.ts        ← clase abstracta con handleError()    │
+│  └── CategoryModel.ts    ← CRUD + reglas de negocio:            │
+│      ├── findAllByUser()     nombre 2–40 caracteres             │
+│      ├── findById()          color hex válido (#RRGGBB)         │
+│      ├── findByName()        sin nombres duplicados por usuario │
+│      ├── create()            orphan cleanup al eliminar         │
+│      ├── update()                                               │
+│      └── delete()                                               │
+└──────────────────────┬──────────────────────────────────────────┘
+                       │ cliente @supabase/supabase-js (ORM ligero)
+┌──────────────────────▼──────────────────────────────────────────┐
+│               CAPA DE DATOS (Supabase / PostgreSQL)              │
+│  tabla categories con RLS: cada usuario accede solo a sus filas  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+| Componente MVC | Implementación en StudyHub | Tecnología |
+|---|---|---|
+| **Vista** | `components/categories/` — Client Components con `"use client"` | React 19 + react-hook-form |
+| **Controlador** | `app/(app)/categories/actions.ts` — Server Actions | Next.js Server Actions |
+| **Modelo** | `lib/models/CategoryModel.ts` — clase con responsabilidad única | TypeScript + Supabase JS |
+| **Patrón DAO** | `CategoryModel` encapsula todo acceso a la tabla `categories` | Clase con métodos CRUD |
+| **Patrón ORM** | `@supabase/supabase-js` traduce métodos encadenados a SQL | `.from().select().eq()` |
+
+**Flujo completo de una mutación (crear categoría):**
+
+```
+1. Usuario completa CategoryForm y hace submit
+2. react-hook-form valida con zodResolver (client-side)
+3. Se invoca createCategoryAction() [Server Action]
+4. El controlador valida el input con Zod (server-side)
+5. El controlador instancia CategoryModel(supabase)
+6. CategoryModel.create() aplica reglas de negocio:
+   - valida nombre (2–40 chars) y color (hex válido)
+   - verifica que no exista otro con el mismo nombre
+7. Inserta en Supabase; RLS confirma que user_id = auth.uid()
+8. El controlador llama revalidatePath('/categories')
+9. La vista recibe { ok: true, data: category } y muestra toast
 ```
 
 **Flujo de autenticación:**
@@ -123,12 +174,17 @@ studyhub/
 │   │   ├── client.ts           # Cliente Supabase para componentes cliente
 │   │   ├── server.ts           # Cliente Supabase para Server Components
 │   │   └── middleware.ts       # Cliente Supabase para middleware
+│   ├── models/                 # ← Capa de Modelos (Eje 2 — patrón MVC/DAO)
+│   │   ├── BaseModel.ts        # Clase abstracta base con manejo de errores
+│   │   ├── CategoryModel.ts    # DAO de categorías: CRUD + reglas de negocio
+│   │   └── index.ts            # Barrel export
 │   ├── types.ts                # Interfaces y tipos TypeScript compartidos
 │   └── utils.ts                # Utilidades: cn(), formatDate(), formatDuration()
 │
 ├── supabase/
 │   └── migrations/
-│       └── 001_initial.sql     # Esquema completo de la base de datos
+│       ├── 001_initial.sql     # Esquema completo de la base de datos
+│       └── 002_categories_constraints.sql  # Constraints y RLS granular (Eje 2)
 │
 ├── public/
 │   └── sounds/
@@ -215,9 +271,10 @@ npm install
 cp .env.example .env.local
 # Editar .env.local con las credenciales de Supabase (ver sección siguiente)
 
-# 4. Ejecutar migraciones en Supabase
-# Ir a supabase.com → SQL Editor → pegar y ejecutar el contenido de:
+# 4. Ejecutar migraciones en Supabase (en orden)
+# Ir a supabase.com → SQL Editor → pegar y ejecutar:
 # supabase/migrations/001_initial.sql
+# supabase/migrations/002_categories_constraints.sql
 
 # 5. Iniciar el servidor de desarrollo
 npm run dev
@@ -250,16 +307,30 @@ Las claves se encuentran en el dashboard de Supabase en **Settings → API**.
 
 ## Base de datos
 
-El esquema completo está en `supabase/migrations/001_initial.sql`. Las tablas principales son:
+El esquema se construye en dos migraciones ejecutadas en orden:
+
+### `001_initial.sql` — Esquema base
 
 | Tabla | Descripción |
 |-------|-------------|
-| `profiles` | Perfil extendido del usuario (nombre, avatar, universidad) |
+| `profiles` | Perfil extendido del usuario (nombre, avatar) |
 | `categories` | Categorías personalizadas con color y nombre |
 | `notes` | Notas con contenido JSON (Tiptap), carpeta y tags |
 | `tasks` | Tareas con cuadrante Eisenhower, deadline y estado |
 | `subtasks` | Subtareas anidadas dentro de una tarea |
 | `study_sessions` | Sesiones de estudio con duración, tipo y categoría |
+
+### `002_categories_constraints.sql` — Integridad y RLS granular (Eje 2)
+
+Refuerza la tabla `categories` con las siguientes reglas, alineadas con las que aplica `CategoryModel` en código:
+
+| Constraint | Tipo | Regla |
+|---|---|---|
+| `categories_user_name_unique` | UNIQUE | Un usuario no puede tener dos categorías con el mismo nombre |
+| `categories_name_not_empty` | CHECK | `length(trim(name)) >= 2` |
+| `categories_color_hex` | CHECK | El color debe coincidir con `^#[0-9a-fA-F]{6}$` |
+
+Las políticas RLS se reemplazan por cuatro políticas granulares (`SELECT`, `INSERT`, `UPDATE`, `DELETE`) para mayor claridad académica y control fino por operación.
 
 Todas las tablas tienen **Row Level Security (RLS)** activado: cada usuario solo puede leer y escribir sus propios registros.
 

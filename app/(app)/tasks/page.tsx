@@ -1,21 +1,22 @@
 import { createClient } from '@/lib/supabase/server';
+import { CategoryModel } from '@/lib/models';
 import { TasksClient } from '@/components/tasks/TasksClient';
 
 export default async function TasksPage() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  const [{ data: tasks }, { data: categories }] = await Promise.all([
+  const categoryModel = new CategoryModel(supabase);
+
+  const [{ data: tasks }, categories] = await Promise.all([
     supabase
       .from('tasks')
       .select('*, subtasks(*), category:categories(*)')
       .eq('user_id', user!.id)
       .order('position', { ascending: true }),
-    supabase
-      .from('categories')
-      .select('*')
-      .eq('user_id', user!.id)
-      .order('name'),
+    categoryModel.findAllByUser(user!.id),
   ]);
 
   return (
@@ -28,7 +29,7 @@ export default async function TasksPage() {
       </div>
       <TasksClient
         initialTasks={tasks ?? []}
-        categories={categories ?? []}
+        categories={categories}
       />
     </div>
   );
