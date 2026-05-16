@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions
+  name="StudyHubService"
+  targetNamespace="http://studyhub.local/soap"
+  xmlns="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:tns="http://studyhub.local/soap"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <!-- ===== Types ===== -->
+  <types>
+    <xsd:schema targetNamespace="http://studyhub.local/soap">
+
+      <!-- GetCategories -->
+      <xsd:element name="GetCategoriesRequest">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="userId" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="GetCategoriesResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="categories" type="tns:CategoryList"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:complexType name="CategoryList">
+        <xsd:sequence>
+          <xsd:element name="category" type="tns:Category" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:complexType name="Category">
+        <xsd:sequence>
+          <xsd:element name="id"         type="xsd:string"/>
+          <xsd:element name="name"       type="xsd:string"/>
+          <xsd:element name="color"      type="xsd:string"/>
+          <xsd:element name="created_at" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <!-- GetTaskStats -->
+      <xsd:element name="GetTaskStatsRequest">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="userId" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="GetTaskStatsResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="stats" type="tns:TaskStats"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:complexType name="TaskStats">
+        <xsd:sequence>
+          <xsd:element name="urgentImportant"       type="xsd:int"/>
+          <xsd:element name="notUrgentImportant"    type="xsd:int"/>
+          <xsd:element name="urgentNotImportant"    type="xsd:int"/>
+          <xsd:element name="notUrgentNotImportant" type="xsd:int"/>
+          <xsd:element name="totalCompleted"        type="xsd:int"/>
+          <xsd:element name="totalPending"          type="xsd:int"/>
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <!-- GetStudyStats -->
+      <xsd:element name="GetStudyStatsRequest">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="userId" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="GetStudyStatsResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="stats" type="tns:StudyStats"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:complexType name="StudyStats">
+        <xsd:sequence>
+          <xsd:element name="totalMinutesThisWeek"  type="xsd:int"/>
+          <xsd:element name="currentStreak"         type="xsd:int"/>
+          <xsd:element name="topCategoryThisMonth"  type="xsd:string"/>
+          <xsd:element name="dailyAverage"          type="xsd:int"/>
+        </xsd:sequence>
+      </xsd:complexType>
+
+    </xsd:schema>
+  </types>
+
+  <!-- ===== Messages ===== -->
+  <message name="GetCategoriesInput">
+    <part name="parameters" element="tns:GetCategoriesRequest"/>
+  </message>
+  <message name="GetCategoriesOutput">
+    <part name="parameters" element="tns:GetCategoriesResponse"/>
+  </message>
+
+  <message name="GetTaskStatsInput">
+    <part name="parameters" element="tns:GetTaskStatsRequest"/>
+  </message>
+  <message name="GetTaskStatsOutput">
+    <part name="parameters" element="tns:GetTaskStatsResponse"/>
+  </message>
+
+  <message name="GetStudyStatsInput">
+    <part name="parameters" element="tns:GetStudyStatsRequest"/>
+  </message>
+  <message name="GetStudyStatsOutput">
+    <part name="parameters" element="tns:GetStudyStatsResponse"/>
+  </message>
+
+  <!-- ===== Port Type ===== -->
+  <portType name="StudyHubPortType">
+    <operation name="GetCategories">
+      <input  message="tns:GetCategoriesInput"/>
+      <output message="tns:GetCategoriesOutput"/>
+    </operation>
+    <operation name="GetTaskStats">
+      <input  message="tns:GetTaskStatsInput"/>
+      <output message="tns:GetTaskStatsOutput"/>
+    </operation>
+    <operation name="GetStudyStats">
+      <input  message="tns:GetStudyStatsInput"/>
+      <output message="tns:GetStudyStatsOutput"/>
+    </operation>
+  </portType>
+
+  <!-- ===== Binding ===== -->
+  <binding name="StudyHubBinding" type="tns:StudyHubPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+    <operation name="GetCategories">
+      <soap:operation soapAction="GetCategories"/>
+      <input>  <soap:body use="literal"/> </input>
+      <output> <soap:body use="literal"/> </output>
+    </operation>
+
+    <operation name="GetTaskStats">
+      <soap:operation soapAction="GetTaskStats"/>
+      <input>  <soap:body use="literal"/> </input>
+      <output> <soap:body use="literal"/> </output>
+    </operation>
+
+    <operation name="GetStudyStats">
+      <soap:operation soapAction="GetStudyStats"/>
+      <input>  <soap:body use="literal"/> </input>
+      <output> <soap:body use="literal"/> </output>
+    </operation>
+  </binding>
+
+  <!-- ===== Service ===== -->
+  <service name="StudyHubService">
+    <port name="StudyHubPort" binding="tns:StudyHubBinding">
+      <soap:address location="http://localhost:3000/api/soap"/>
+    </port>
+  </service>
+
+</definitions>

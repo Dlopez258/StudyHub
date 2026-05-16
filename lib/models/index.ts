@@ -1,3 +1,11 @@
 export { BaseModel, ModelError } from './BaseModel';
 export { CategoryModel } from './CategoryModel';
 export type { CreateCategoryInput, UpdateCategoryInput } from './CategoryModel';
+export { TaskModel } from './TaskModel';
+export type { CreateTaskInput, UpdateTaskInput } from './TaskModel';
+export { FolderModel } from './FolderModel';
+export type { CreateFolderInput, UpdateFolderInput } from './FolderModel';
+export { NoteModel } from './NoteModel';
+export type { CreateNoteInput, UpdateNoteInput } from './NoteModel';
+export { SessionModel } from './SessionModel';
+export type { CreateSessionInput, SessionStats } from './SessionModel';

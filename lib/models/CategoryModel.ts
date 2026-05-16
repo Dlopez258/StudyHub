@@ -117,9 +117,6 @@ export class CategoryModel extends BaseModel {
   async delete(id: string, userId: string): Promise<void> {
     const current = await this.findById(id, userId);
     if (!current) throw new Error('Categoría no encontrada.');
-
-    // The FK ON DELETE SET NULL handles orphan cleanup at DB level,
-    // but we do it explicitly here to document the business rule.
     await Promise.all([
       this.supabase
         .from('tasks')
