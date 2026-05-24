@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Roboto } from 'next/font/google';
 import { Toaster } from 'sonner';
+import { ServiceWorkerRegistrar } from '@/components/shared/ServiceWorkerRegistrar';
 import './globals.css';
 
 const roboto = Roboto({
@@ -23,6 +24,7 @@ export default function RootLayout({
       <body className="h-full antialiased">
         {children}
         <Toaster position="top-right" richColors closeButton />
+        <ServiceWorkerRegistrar />
       </body>
     </html>
   );
