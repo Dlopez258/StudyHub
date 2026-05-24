@@ -18,7 +18,7 @@ export function SessionHistory({ sessions }: Props) {
       const d = new Date(s.started_at).toISOString().slice(0, 10);
       if (!d.startsWith(dateFilter)) return false;
     }
-    if (categoryFilter && s.category_id !== categoryFilter) return false;
+    if (categoryFilter && s.category?.name !== categoryFilter) return false;
     return true;
   });
 

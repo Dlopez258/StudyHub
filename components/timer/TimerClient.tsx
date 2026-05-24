@@ -50,9 +50,17 @@ export function TimerClient({ categories, initialSessions, dailyGoal, weeklyGoal
   const stateRef = useRef(state);
   const pipRootRef = useRef<ReturnType<typeof ReactDOM.createRoot> | null>(null);
   const [pipWindow, setPipWindow] = useState<Window | null>(null);
+  const userIdRef = useRef<string | null>(null);
 
   // Keep stateRef in sync so async callbacks always see latest state
   useEffect(() => { stateRef.current = state; });
+
+  // Cache the authenticated user id so saveSession can include it
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      userIdRef.current = data.user?.id ?? null;
+    });
+  }, []);
 
   // Load persisted state on mount (client only)
   useEffect(() => {
@@ -217,10 +225,19 @@ export function TimerClient({ categories, initialSessions, dailyGoal, weeklyGoal
 
   async function saveSession(completed: boolean) {
     const s = stateRef.current;
+    if (!userIdRef.current) {
+      const { data: userData } = await supabase.auth.getUser();
+      userIdRef.current = userData.user?.id ?? null;
+    }
+    if (!userIdRef.current) {
+      toast.error('Error al guardar la sesión: usuario no autenticado');
+      return;
+    }
     const actual = s.durationMinutes * 60 - computeSecondsLeft(s);
     const { data, error } = await supabase
       .from('study_sessions')
       .insert({
+        user_id: userIdRef.current,
         category_id: s.categoryId,
         duration_minutes: s.durationMinutes,
         actual_duration_seconds: actual,
