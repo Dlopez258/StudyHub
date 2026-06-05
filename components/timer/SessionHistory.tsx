@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Clock, CheckCircle2, XCircle } from 'lucide-react';
 import type { StudySession } from '@/lib/types';
-import { formatDateTime } from '@/lib/utils';
+import { formatDateTime, formatTime } from '@/lib/utils';
 
 interface Props {
   sessions: (StudySession & { category?: { name: string; color: string } | null })[];
@@ -74,9 +74,10 @@ export function SessionHistory({ sessions }: Props) {
 
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-[var(--color-text)]">
-                {formatDateTime(s.started_at)}
+                Inicio: {formatDateTime(s.started_at)}
               </p>
               <p className="text-xs text-[var(--color-text-soft)]">
+                Fin: {s.completed_at ? formatTime(s.completed_at) : 'En progreso'} ·{' '}
                 {s.mode === 'pomodoro' ? 'Pomodoro' : 'Simple'} ·{' '}
                 {Math.round(s.actual_duration_seconds / 60)} min reales
               </p>

@@ -29,6 +29,13 @@ export function formatDateTime(dateStr: string): string {
   });
 }
 
+export function formatTime(dateStr: string): string {
+  return new Date(dateStr).toLocaleTimeString('es-CO', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
 export function isOverdue(deadline: string): boolean {
   return new Date(deadline) < new Date();
 }
