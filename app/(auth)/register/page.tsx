@@ -55,7 +55,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-gray-light)] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="flex items-center justify-center gap-2 mb-8">
           <div className="w-10 h-10 rounded-xl bg-[var(--color-primary)] flex items-center justify-center">
@@ -64,7 +64,7 @@ export default function RegisterPage() {
           <span className="font-bold text-2xl text-[var(--color-text)]">StudyHub</span>
         </div>
 
-        <div className="bg-white rounded-2xl p-8 shadow-[var(--shadow-card)]">
+        <div className="bg-[var(--color-surface)] rounded-2xl p-8 shadow-[var(--shadow-card)]">
           <h1 className="text-2xl font-bold text-[var(--color-text)] mb-1">
             Crea tu cuenta
           </h1>

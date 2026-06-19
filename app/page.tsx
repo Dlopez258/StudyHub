@@ -3,7 +3,7 @@ import { BookOpen, CheckSquare, Timer, ArrowRight } from 'lucide-react';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-[var(--color-bg)] flex flex-col">
       {/* Navbar */}
       <header className="border-b border-[var(--color-gray-border)] px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -63,7 +63,7 @@ export default function LandingPage() {
       </main>
 
       {/* Features */}
-      <section className="px-6 py-20 bg-[var(--color-gray-light)]">
+      <section className="px-6 py-20 bg-[var(--color-surface-soft)]">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl font-bold text-center text-[var(--color-text)] mb-12">
             Todo lo que necesitas para estudiar mejor
@@ -110,7 +110,7 @@ function FeatureCard({
   colorClass: string;
 }) {
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] transition-all hover:-translate-y-1">
+    <div className="bg-[var(--color-surface)] rounded-2xl p-6 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] transition-all hover:-translate-y-1">
       <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${colorClass}`}>
         <Icon size={24} />
       </div>
