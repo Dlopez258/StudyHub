@@ -9,14 +9,36 @@ interface Props {
   isPaused: boolean;
   onPause: () => void;
   onResume: () => void;
+  onStop: () => void;
+  onStart: () => void;
 }
 
 const PRIMARY = '#67b31f';
+const DANGER = '#dc2626';
+
+const buttonBase: React.CSSProperties = {
+  padding: '2vmin 5vmin',
+  borderRadius: '2vmin',
+  fontSize: 'clamp(10px, 5vw, 16px)',
+  fontWeight: 600,
+  cursor: 'pointer',
+  whiteSpace: 'nowrap',
+  transition: 'all 0.15s ease',
+};
 
 // Los colores se leen de variables CSS inyectadas en la ventana PiP
 // (ver TimerClient.openPiP), con fallback al tema claro. Así la ventana
 // flotante respeta el modo oscuro y el contenido escala con su tamaño.
-export function MiniTimer({ secondsLeft, phaseLabel, isRunning, isPaused, onPause, onResume }: Props) {
+export function MiniTimer({
+  secondsLeft,
+  phaseLabel,
+  isRunning,
+  isPaused,
+  onPause,
+  onResume,
+  onStop,
+  onStart,
+}: Props) {
   return (
     <div
       style={{
@@ -32,7 +54,7 @@ export function MiniTimer({ secondsLeft, phaseLabel, isRunning, isPaused, onPaus
         fontFamily: 'system-ui, sans-serif',
         gap: '2vmin',
         userSelect: 'none',
-        padding: '6vmin 8vmin',
+        padding: '5vmin 6vmin',
         overflow: 'hidden',
       }}
     >
@@ -51,7 +73,7 @@ export function MiniTimer({ secondsLeft, phaseLabel, isRunning, isPaused, onPaus
       </span>
       <span
         style={{
-          fontSize: 'clamp(28px, 18vw, 96px)',
+          fontSize: 'clamp(28px, 16vw, 88px)',
           fontWeight: 700,
           lineHeight: 1,
           fontVariantNumeric: 'tabular-nums',
@@ -59,26 +81,46 @@ export function MiniTimer({ secondsLeft, phaseLabel, isRunning, isPaused, onPaus
       >
         {formatDuration(secondsLeft)}
       </span>
-      {isRunning && (
-        <button
-          onClick={isPaused ? onResume : onPause}
-          style={{
-            marginTop: '2vmin',
-            padding: '2vmin 6vmin',
-            background: isPaused ? PRIMARY : 'transparent',
-            border: `1.5px solid ${isPaused ? PRIMARY : 'var(--color-gray-border, #e2e8f0)'}`,
-            color: isPaused ? '#ffffff' : 'var(--color-text-soft, #444444)',
-            borderRadius: '2vmin',
-            fontSize: 'clamp(10px, 5vw, 18px)',
-            fontWeight: 600,
-            cursor: 'pointer',
-            whiteSpace: 'nowrap',
-            transition: 'all 0.15s ease',
-          }}
-        >
-          {isPaused ? 'Reanudar' : 'Pausar'}
-        </button>
-      )}
+      <div style={{ display: 'flex', gap: '2vmin', marginTop: '2vmin' }}>
+        {isRunning ? (
+          <>
+            <button
+              onClick={isPaused ? onResume : onPause}
+              style={{
+                ...buttonBase,
+                background: isPaused ? PRIMARY : 'transparent',
+                border: `1.5px solid ${isPaused ? PRIMARY : 'var(--color-gray-border, #e2e8f0)'}`,
+                color: isPaused ? '#ffffff' : 'var(--color-text-soft, #444444)',
+              }}
+            >
+              {isPaused ? 'Reanudar' : 'Pausar'}
+            </button>
+            <button
+              onClick={onStop}
+              style={{
+                ...buttonBase,
+                background: 'transparent',
+                border: `1.5px solid ${DANGER}`,
+                color: DANGER,
+              }}
+            >
+              Detener
+            </button>
+          </>
+        ) : (
+          <button
+            onClick={onStart}
+            style={{
+              ...buttonBase,
+              background: PRIMARY,
+              border: `1.5px solid ${PRIMARY}`,
+              color: '#ffffff',
+            }}
+          >
+            Iniciar
+          </button>
+        )}
+      </div>
     </div>
   );
 }

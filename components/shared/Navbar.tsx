@@ -20,7 +20,7 @@ import { ThemeToggle } from './ThemeToggle';
 const NAV_LINKS = [
   { href: '/notes', label: 'Notas', icon: BookOpen },
   { href: '/tasks', label: 'Tareas', icon: CheckSquare },
-  { href: '/timer', label: 'Temporizador', icon: Timer },
+  { href: '/timer', label: 'Tiempo de estudio', icon: Timer },
 ];
 
 interface NavbarProps {

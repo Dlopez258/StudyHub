@@ -13,7 +13,7 @@ import { toast } from 'sonner';
 const schema = z
   .object({
     full_name: z.string().min(2, 'Ingresa tu nombre completo'),
-    email: z.string().email('Correo inválido'),
+    email: z.email('Correo inválido'),
     password: z.string().min(6, 'Mínimo 6 caracteres'),
     confirm_password: z.string(),
   })

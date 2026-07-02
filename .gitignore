@@ -13,8 +13,8 @@
 # testing
 /coverage
 
-# next.js
-/.next/
+# next.js (sin anclar a la raíz: evita que un .next anidado entre al repo)
+.next/
 /out/
 
 # production

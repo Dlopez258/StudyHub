@@ -31,7 +31,6 @@ export default function LandingPage() {
       {/* Hero */}
       <main className="flex-1 flex flex-col items-center justify-center px-6 py-24 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#67b31f1a] text-[var(--color-primary)] rounded-full text-sm font-medium mb-8">
-          <span>✦</span>
           <span>Tu espacio de estudio todo en uno</span>
         </div>
 
@@ -83,8 +82,8 @@ export default function LandingPage() {
             />
             <FeatureCard
               icon={Timer}
-              title="Temporizador Pomodoro"
-              desc="Sesiones de estudio con modo simple o Pomodoro. Historial y estadísticas."
+              title="Temporizador y cronómetro"
+              desc="Mide tus sesiones de estudio con temporizador o cronómetro. Historial y estadísticas."
               colorClass="bg-orange-50 text-orange-600 dark:bg-orange-500/15 dark:text-orange-400"
             />
           </div>

@@ -44,7 +44,7 @@ export default async function DashboardPage() {
     <main className="max-w-5xl mx-auto px-6 py-8">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-[var(--color-text)]">
-          Hola, {firstName} 👋
+          Hola, {firstName}
         </h1>
         <p className="text-[var(--color-text-soft)] mt-1">
           {new Date().toLocaleDateString('es-CO', {
@@ -87,7 +87,7 @@ export default async function DashboardPage() {
         <QuickCard
           href="/timer"
           icon={Timer}
-          title="Temporizador"
+          title="Tiempo de estudio"
           desc="Inicia una sesión de estudio"
           color="orange"
         />

@@ -78,7 +78,7 @@ export function SessionHistory({ sessions }: Props) {
               </p>
               <p className="text-xs text-[var(--color-text-soft)]">
                 Fin: {s.completed_at ? formatTime(s.completed_at) : 'En progreso'} ·{' '}
-                {s.mode === 'pomodoro' ? 'Pomodoro' : 'Simple'} ·{' '}
+                {s.mode === 'stopwatch' ? 'Cronómetro' : s.mode === 'pomodoro' ? 'Pomodoro' : 'Temporizador'} ·{' '}
                 {Math.round(s.actual_duration_seconds / 60)} min reales
               </p>
             </div>

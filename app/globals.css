@@ -78,6 +78,19 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+/* Los <select> y sus opciones usan las superficies del tema para que el
+   desplegable nativo mantenga contraste también en modo oscuro (sin esto,
+   el popup hereda fondo claro del navegador con texto del tema oscuro). */
+select {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+}
+
+select option {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+}
+
 /* Tiptap editor styles */
 .ProseMirror {
   outline: none;

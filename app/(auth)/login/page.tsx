@@ -11,7 +11,7 @@ import { createClient } from '@/lib/supabase/client';
 import { toast } from 'sonner';
 
 const schema = z.object({
-  email: z.string().email('Correo inválido'),
+  email: z.email('Correo inválido'),
   password: z.string().min(6, 'Mínimo 6 caracteres'),
 });
 

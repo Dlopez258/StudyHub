@@ -66,7 +66,9 @@ export interface Category {
   created_at: string;
 }
 
-export type StudyMode = 'simple' | 'pomodoro' | 'stopwatch';
+// 'pomodoro' ya no es seleccionable en la UI; se conserva para poder
+// mostrar sesiones antiguas guardadas con ese modo.
+export type StudyMode = 'simple' | 'stopwatch' | 'pomodoro';
 
 export interface StudySession {
   id: string;
@@ -91,7 +93,5 @@ export interface TimerState {
   startedAt: number | null;
   pausedAt: number | null;
   totalPausedMs: number;
-  pomodoroPhase: 'study' | 'short_break' | 'long_break';
-  pomodoroCycle: number;
   sessionId: string | null;
 }

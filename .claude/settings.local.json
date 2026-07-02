@@ -5,7 +5,13 @@
       "Bash(npx create-next-app@latest . --typescript --tailwind --app --no-src-dir --import-alias \"@/*\" --yes)",
       "Bash(npm install *)",
       "Bash(npx tsc *)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(curl -s -o /dev/null -w \"/ -> %{http_code} \\(redirect: %{redirect_url}\\)\\\\n\" http://localhost:3789/)",
+      "Bash(curl -s -o /dev/null -w \"/login -> %{http_code}\\\\n\" http://localhost:3789/login)",
+      "Bash(ls proxy.ts)",
+      "Bash(rm -rf app/theme-probe)",
+      "Bash(npx eslint *)",
+      "Bash(echo \"eslint exit: $?\")"
     ]
   }
 }
